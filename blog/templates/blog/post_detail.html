@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+        }
+        h1 {
+            color: #444;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .edit-link,
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #5cb85c;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .edit-link:hover,
+        .back-link:hover {
+            background-color: #4cae4c;
+        }
+        .back-link {
+            background-color: #007bff;
+        }
+        .back-link:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+        body.dark-mode {
+            background-color: #343a40; /* Dark mode background */
+            color: #f8f9fa; /* Dark mode text color */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.content }}</p>
+
+        {% if user.is_authenticated %}
+            <a class="edit-link" href="{% url 'edit_post' post.id %}">Edit</a>  <!-- Edit link for logged-in users -->
+        {% endif %}
+
+        <a class="back-link" href="{% url 'post_list' %}">Back to posts</a>
+    </div>
+    <div class="footer">
+        <p>&copy; {{ current_year }}  {{ post.title }} writtenBy {{post.author}}</p>
+    </div>
+</body>
+<script>
+    // Check for theme preference in local storage
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        const container = document.querySelector('.container'); // Class selector ka istemal
+        container.style.backgroundColor = ' #343a40'; 
+        const h1 = document.querySelectorAll('h1');
+        h1.forEach(heading => {
+            heading.style.color = 'white';
+        });
+
+        
+
+    }
+</script>
+</html>
+

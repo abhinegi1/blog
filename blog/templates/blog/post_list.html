@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Posts</title>
+    <!-- Link to Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link to Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            transition: background-color 0.5s, color 0.5s;
+            background-color: #f8f9fa; /* Light mode background */
+            color: #343a40; /* Light mode text color */
+        } 
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #343a40; /* Dark mode background */
+            color: #f8f9fa; /* Dark mode text color */
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .welcome {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .post-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .post-list li {
+            background: #ffffff; /* Light mode post background */
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: transform 0.2s;
+        }
+
+        body.dark-mode .post-list li {
+            background: #495057; /* Dark mode post background */
+            border: 1px solid #6c757d; /* Dark mode post border */
+        }
+
+        .post-list li:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .nav-links a {
+            margin: 0 10px;
+        }
+
+        .toggle-btn {
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            color: inherit;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-btn i {
+            margin-right: 5px; /* Space between icon and text */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Blog Posts</h1>
+
+        <button class="toggle-btn" id="theme-toggle">
+            <i class="fas fa-sun"></i> <!-- Sun icon for light mode -->
+        </button>
+
+        {% if user.is_authenticated %}
+            <div class="welcome">
+                <p>Welcome, {{ user.username }}!</p>
+            </div>
+
+            <div class="nav-links">
+                <a href="{% url 'create_post' %}" class="btn btn-primary">Add New Post</a> |
+                <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+            </div>
+
+            <div class="nav-links">
+                <form method="get" action="{% url 'post_list' %}">
+                    <input type="text" name="q" placeholder="Search posts..." required>
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="nav-links">
+                <a href="{% url 'login' %}" class="btn btn-success">Login</a> |
+                <a href="{% url 'signup' %}" class="btn btn-info">Signup</a>
+            </div>
+
+            <div class="nav-links">
+                <form method="get" action="{% url 'post_list' %}">
+                    <input type="text" name="q" placeholder="Search posts..." required>
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </form>
+            </div>
+        {% endif %}
+
+        <ul class="post-list">
+            {% for post in posts %}
+                <li>
+                    <a href="{% url 'post_detail' post.id %}" style="text-decoration: none; color: #007bff;">{{ post.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Optional: Bootstrap JS for additional features -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to apply saved theme preference on page load
+        function applySavedTheme() {
+            const savedTheme = localStorage.getItem('theme');  // Check if a theme is saved in localStorage
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+
+        // Call the function on page load to apply the theme
+        applySavedTheme();
+
+        // Theme toggle button click event
+        const toggleButton = document.getElementById('theme-toggle');
+        toggleButton.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+
+            // Check and update the theme in localStorage
+            if (document.body.classList.contains('dark-mode')) {
+                toggleButton.innerHTML = '<i class="fas fa-moon"></i>';  // Moon icon for dark mode
+                localStorage.setItem('theme', 'dark');  // Save dark mode preference
+            } else {
+                toggleButton.innerHTML = '<i class="fas fa-sun"></i>';  // Sun icon for light mode
+                localStorage.setItem('theme', 'light');  // Save light mode preference
+            }
+        });
+    </script>
+</body>
+</html>
